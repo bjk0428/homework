@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <link rel="shortcut icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/3721/3721846.png">
+    <title>당근마켓</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Do Hyeon', sans-serif;
+        }
+        .myitem {
+            width: 500px;
+            height: 300px;
+            margin-top: 50px;
+
+            background-image: url("https://images.mypetlife.co.kr/content/uploads/2021/07/08164954/david-holifield-uidpH617Fb8-unsplash-1024x684.jpg");
+            background-position: center;
+            background-size: cover;
+        }
+
+        .price {
+            font-size: 16px;
+        }
+
+        .desc {
+            width: 500px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .currency{
+            color : blue;
+            font-size: 20px;
+        }
+
+        .order-box {
+            width: 500px;
+        }
+
+        .mybtn {
+            width: 100px;
+            margin: auto;
+            display: block;
+        }
+
+        .wrap {
+            margin:auto;
+            width: 500px;
+        }
+    </style>
+    <script>
+        //환율정보 호출,입력
+        $(document).ready(function(){
+              $.ajax({
+                type : "GET",
+                url : "https://api.manana.kr/exchange/rate.json",
+                data : {},
+                success : function(response){
+                    let dollar = response[1]['rate'];
+
+                    let yen = response[2]['rate'];
+                    let temp = yen * 100
+                    let temp2 = Math.ceil(temp)
+                    let yenResult = temp2 / 100
+
+                    $('#dollar-rate').text(dollar);
+                    $('#yen-rate').text(yenResult);
+                }
+            })
+        });
+
+        //주문정보 입력 Validation chk
+        function order() {
+            let name = $('#name-area').val()
+            let count = $('#count-area').val()
+            let addr = $('#addr-area').val()
+            let phone = $('#phone-area').val()
+            let regPhone = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+
+
+            if (name == '') {
+                alert('이름을 입력해 주세요.')
+            } else if (count == '-- 수량을 선택하세요 --') {
+                alert('수량을 선택해주세요.')
+            } else if (addr == '') {
+                alert('주소를 입력해 주세요.')
+            } else if (phone == '') {
+                alert('전화번호를 입력해 주세요.')
+            }else if(phone !='' && regPhone.test(phone) === false) {
+                    alert('잘못된 휴대전화 번호입니다.')
+            }else {
+                alert('주문이 완료되었습니다!')
+                $('.form-control').val('')
+                $('#count-area').val('-- 수량을 선택하세요 --')
+            }
+        }
+    </script>
+</head>
+
+<body>
+<div class="wrap">
+    <div class="myitem"></div>
+    <div class="desc">
+        <h1>당근을 팝니다. <span class="price">가격:3,000원/5개</span></h1>
+        <p>이 당근은 특별한 맛은 없습니다. 하지만 건강해질 수 있죠!</p>
+    </div>
+    <div class="currency">
+        <p>달러-원 환율 : <span id="dollar-rate"> </span></p>
+        <p>엔-원 환율 : <span id="yen-rate"> </span></p>
+    </div>
+    <div class="order-box">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">주문자이름</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="name-area">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" >수량</label>
+            </div>
+            <select class="custom-select" id="count-area">
+                <option selected>-- 수량을 선택하세요 --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">주소</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="addr-area">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">전화번호</span>
+            </div>
+            <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="phone-area" placeholder="000-0000-0000 형식으로 입력해주세요.">
+        </div>
+        <button onclick="order()" type="button" class="btn btn-primary mybtn">주문하기</button>
+    </div>
+</div>
+</body>
+
+</html>
